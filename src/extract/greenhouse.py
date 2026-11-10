@@ -25,7 +25,15 @@ def fetch_jobs(slug):
             if attempt == MAX_RETRIES:
                 raise
             time.sleep(2 ** attempt)
-            
+
+def parse_job(raw):
+    return{
+        "job_id": raw["id"], 
+        "title": raw["title"], 
+        "location": raw["location"]["name"], 
+        "url": raw["absolute_url"], 
+        "published_at": raw["first_published"], 
+    }
 
 if __name__ == "__main__":
     logging.basicConfig(
