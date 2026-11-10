@@ -17,6 +17,10 @@ def fetch_jobs(slug):
             logger.info("Got %d jobs for %s", len(jobs), slug)
             return jobs
         except requests.exceptions.RequestException as error:
+            status = error.response.status_code if error.response is not None else None
+            if status is not None and 400 <= status < 500 and status != 429:
+                logger.error("Permanent error %d for %s, not retrying", status, slug)
+                raise
             logger.warning("Attempt %d failed for %s: %s", attempt, slug, error)
             if attempt == MAX_RETRIES:
                 raise
